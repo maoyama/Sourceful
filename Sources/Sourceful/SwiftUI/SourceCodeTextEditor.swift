@@ -103,6 +103,7 @@ public struct SourceCodeTextEditor: _ViewRepresentable {
     #if os(macOS)
     public func makeNSView(context: Context) -> SyntaxTextView {
         let wrappedView = SyntaxTextView()
+        wrappedView.textView.isEditable = false
         wrappedView.delegate = context.coordinator
         wrappedView.theme = custom.theme()
         wrappedView.contentTextView.insertionPointColor = custom.insertionPointColor()
