@@ -155,5 +155,11 @@ extension SourceCodeTextEditor {
 
 #Preview {
     @Previewable @State var text = "Hello world!!"
-    SourceCodeTextEditor(text: $text)
+    VStack {
+        Text(text)
+        Text(text)
+        SourceCodeTextEditor(text: $text)
+        SourceCodeTextEditor(text: $text)
+        SourceCodeTextEditor(text: $text)
+    }
 }
