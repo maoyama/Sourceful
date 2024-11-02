@@ -152,3 +152,8 @@ extension SourceCodeTextEditor {
 }
 
 #endif
+
+#Preview {
+    @Previewable @State var text = "Hello world!!"
+    SourceCodeTextEditor(text: $text)
+}
