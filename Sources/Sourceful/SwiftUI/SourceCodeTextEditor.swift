@@ -118,7 +118,23 @@ public struct SourceCodeTextEditor: _ViewRepresentable {
         view.text = text
     }
     #endif
-    
+
+    public func sizeThatFits(_ proposal: ProposedViewSize, nsView: SyntaxTextView, context: Context) -> CGSize? {
+        guard let width = proposal.width else { return nil }
+        print(proposal, fittingSize(for: nsView.contentTextView))
+        return .init(width: width, height: fittingSize(for: nsView.contentTextView).height)
+    }
+
+    func fittingSize(for textView: NSTextView) -> NSSize {
+        guard let textContainer = textView.textContainer,
+              let layoutManager = textView.layoutManager else {
+            return .zero
+        }
+        textContainer.containerSize = NSSize(width: textView.bounds.width, height: .greatestFiniteMagnitude)
+        layoutManager.glyphRange(for: textContainer)
+        let neededHeight = layoutManager.usedRect(for: textContainer).height
+        return NSSize(width: textView.bounds.width, height: neededHeight)
+    }
 
 }
 
@@ -154,12 +170,21 @@ extension SourceCodeTextEditor {
 #endif
 
 #Preview {
-    @Previewable @State var text = "Hello world!!"
+    @Previewable @State var text = "Hello world!\nHello world!"
     VStack {
         Text(text)
+//        Text(text)
+        SourceCodeTextEditor(text: $text)
+        SourceCodeTextEditor(text: $text)
+        SourceCodeTextEditor(text: $text)
+    }
+}
+
+// TODO: Fix me
+#Preview("line breaks are not working") {
+    @Previewable @State var text = "Hello world! Hello world! Hello world! Hello world! Hello world!\nHello world!"
+    VStack {
         Text(text)
-        SourceCodeTextEditor(text: $text)
-        SourceCodeTextEditor(text: $text)
         SourceCodeTextEditor(text: $text)
     }
 }
