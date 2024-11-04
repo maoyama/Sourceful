@@ -145,12 +145,7 @@ open class SyntaxTextView: _View {
     private func setup() {
 
         textView.gutterWidth = 20
-
-        #if os(iOS)
-
         textView.translatesAutoresizingMaskIntoConstraints = false
-
-        #endif
 
         #if os(macOS)
 
