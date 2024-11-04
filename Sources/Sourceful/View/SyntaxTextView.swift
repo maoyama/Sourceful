@@ -139,7 +139,6 @@ open class SyntaxTextView: _View {
 
     #if os(macOS)
 
-    public let scrollView = NSScrollView()
 
     #endif
 
@@ -157,39 +156,17 @@ open class SyntaxTextView: _View {
 
         wrapperView.translatesAutoresizingMaskIntoConstraints = false
 
-        scrollView.backgroundColor = .clear
-        scrollView.drawsBackground = false
-
-        scrollView.contentView.backgroundColor = .clear
-
-        scrollView.translatesAutoresizingMaskIntoConstraints = false
-
-        addSubview(scrollView)
+        addSubview(textView)
+        textView.topAnchor.constraint(equalTo: self.topAnchor).isActive = true
+        textView.bottomAnchor.constraint(equalTo: self.bottomAnchor).isActive = true
+        textView.leadingAnchor.constraint(equalTo: self.leadingAnchor).isActive = true
+        textView.trailingAnchor.constraint(equalTo: self.trailingAnchor).isActive = true
 
         addSubview(wrapperView)
-
-
-        scrollView.topAnchor.constraint(equalTo: self.topAnchor).isActive = true
-        scrollView.bottomAnchor.constraint(equalTo: self.bottomAnchor).isActive = true
-        scrollView.leadingAnchor.constraint(equalTo: self.leadingAnchor).isActive = true
-        scrollView.trailingAnchor.constraint(equalTo: self.trailingAnchor).isActive = true
-
-        wrapperView.topAnchor.constraint(equalTo: scrollView.topAnchor).isActive = true
-        wrapperView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor).isActive = true
-        wrapperView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor).isActive = true
-        wrapperView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor).isActive = true
-
-
-        scrollView.borderType = .noBorder
-        scrollView.hasVerticalScroller = true
-        scrollView.hasHorizontalScroller = false
-        scrollView.scrollerKnobStyle = .light
-
-        scrollView.documentView = textView
-
-        scrollView.contentView.postsBoundsChangedNotifications = true
-
-        NotificationCenter.default.addObserver(self, selector: #selector(didScroll(_:)), name: NSView.boundsDidChangeNotification, object: scrollView.contentView)
+        wrapperView.topAnchor.constraint(equalTo: self.topAnchor).isActive = true
+        wrapperView.bottomAnchor.constraint(equalTo: self.bottomAnchor).isActive = true
+        wrapperView.leadingAnchor.constraint(equalTo: self.leadingAnchor).isActive = true
+        wrapperView.trailingAnchor.constraint(equalTo: self.trailingAnchor).isActive = true
 
         textView.minSize = NSSize(width: 0.0, height: self.bounds.height)
         textView.maxSize = NSSize(width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude)
@@ -255,12 +232,6 @@ open class SyntaxTextView: _View {
 
     open override func viewDidMoveToSuperview() {
         super.viewDidMoveToSuperview()
-
-    }
-
-    @objc func didScroll(_ notification: Notification) {
-
-        wrapperView.setNeedsDisplay(wrapperView.bounds)
 
     }
 

@@ -62,8 +62,8 @@ import Foundation
 				
 			} else {
 			
-				let contentHeight = textView.enclosingScrollView!.documentView!.bounds.height
-			
+				let contentHeight = textView.layoutManager?.usedRect(for: textView.textContainer!).height ?? 0
+
 				let yOffset = self.bounds.height - contentHeight
 			
 				var paragraphs: [Paragraph]
