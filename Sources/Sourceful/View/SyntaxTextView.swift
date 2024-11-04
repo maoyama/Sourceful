@@ -163,6 +163,9 @@ open class SyntaxTextView: _View {
         textView.trailingAnchor.constraint(equalTo: self.trailingAnchor).isActive = true
 
         addSubview(wrapperView)
+        // TODO: Fix line number view drawing
+        wrapperView.isHidden = true
+
         wrapperView.topAnchor.constraint(equalTo: self.topAnchor).isActive = true
         wrapperView.bottomAnchor.constraint(equalTo: self.bottomAnchor).isActive = true
         wrapperView.leadingAnchor.constraint(equalTo: self.leadingAnchor).isActive = true
