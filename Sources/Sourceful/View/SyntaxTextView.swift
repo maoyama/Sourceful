@@ -65,6 +65,7 @@ open class SyntaxTextView: _View {
         }
     }
 
+
     var ignoreSelectionChange = false
 
     #if os(macOS)
@@ -158,8 +159,6 @@ open class SyntaxTextView: _View {
         textView.trailingAnchor.constraint(equalTo: self.trailingAnchor).isActive = true
 
         addSubview(wrapperView)
-        // TODO: Fix line number view drawing
-        wrapperView.isHidden = true
 
         wrapperView.topAnchor.constraint(equalTo: self.topAnchor).isActive = true
         wrapperView.bottomAnchor.constraint(equalTo: self.bottomAnchor).isActive = true
@@ -220,10 +219,9 @@ open class SyntaxTextView: _View {
             textView.smartInsertDeleteType = .no
         }
 
-        self.clipsToBounds = true
 
         #endif
-
+        self.clipsToBounds = true
     }
 
     #if os(macOS)
