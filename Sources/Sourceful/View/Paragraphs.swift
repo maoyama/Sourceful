@@ -166,7 +166,7 @@ func drawLineNumbers(_ paragraphs: [Paragraph], in rect: CGRect, for textView: I
 		drawRect.origin.x = gutterWidth - drawSize.width - 4
 		
 		#if os(macOS)
-//			drawRect.origin.y += (drawRect.height - drawSize.height) / 2.0
+			drawRect.origin.y += (drawRect.height - drawSize.height) // superscript
 		#else
 			//			drawRect.origin.y += 22 - drawSize.height
 		#endif
