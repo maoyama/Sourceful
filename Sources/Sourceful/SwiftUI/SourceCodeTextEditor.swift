@@ -178,7 +178,6 @@ extension SourceCodeTextEditor {
     }
 }
 
-// TODO: Fix me
 #Preview("line breaks are not working") {
     @Previewable @State var text = "Hello world! Hello world! Hello world! Hello world! Hello world!world!world!world!world!world!world!\nHello world!"
     LazyVStack {
