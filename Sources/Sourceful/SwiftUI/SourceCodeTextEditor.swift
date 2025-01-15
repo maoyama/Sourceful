@@ -56,6 +56,7 @@ public struct SourceCodeTextEditor: _ViewRepresentable {
     }
     
     @Binding private var text: String
+	@Binding private var lineNumbers: [String]
     private var shouldBecomeFirstResponder: Bool
     private var custom: Customization
     
@@ -68,11 +69,13 @@ public struct SourceCodeTextEditor: _ViewRepresentable {
             textViewDidBeginEditing: { _ in },
             theme: { DefaultSourceCodeTheme() }
         ),
-        shouldBecomeFirstResponder: Bool = false
+        shouldBecomeFirstResponder: Bool = false,
+		lineNumbers: Binding<[String]> = .constant([])
     ) {
         self._text = text
         self.custom = customization
         self.shouldBecomeFirstResponder = shouldBecomeFirstResponder
+		self._lineNumbers = lineNumbers
     }
     
     public func makeCoordinator() -> Coordinator {
@@ -84,6 +87,7 @@ public struct SourceCodeTextEditor: _ViewRepresentable {
         let wrappedView = SyntaxTextView()
         wrappedView.delegate = context.coordinator
         wrappedView.theme = custom.theme()
+		wrappedView.lineNumbers = lineNumbers
 //        wrappedView.contentTextView.insertionPointColor = custom.insertionPointColor()
         
         context.coordinator.wrappedView = wrappedView
@@ -106,6 +110,7 @@ public struct SourceCodeTextEditor: _ViewRepresentable {
         wrappedView.textView.isEditable = false
         wrappedView.delegate = context.coordinator
         wrappedView.theme = custom.theme()
+		wrappedView.lineNumbers = lineNumbers
         wrappedView.contentTextView.insertionPointColor = custom.insertionPointColor()
         
         context.coordinator.wrappedView = wrappedView
@@ -169,7 +174,7 @@ extension SourceCodeTextEditor {
 #endif
 
 #Preview {
-    @Previewable @State var text = "Hello world!\nHello world!\n"
+    @Previewable @State var text = "Hello world!\n\nHello world!\n"
     LazyVStack {
         Text(text)
         SourceCodeTextEditor(text: $text)

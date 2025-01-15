@@ -68,6 +68,15 @@ open class SyntaxTextView: _View {
 
     var ignoreSelectionChange = false
 
+	public var lineNumbers: [String]? {
+		set {
+			textView.lineNumbers = newValue
+		}
+		get {
+			return textView.lineNumbers
+		}
+	}
+
     #if os(macOS)
 
     let wrapperView = TextViewWrapperView()

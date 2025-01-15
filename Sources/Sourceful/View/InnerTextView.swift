@@ -26,7 +26,9 @@ class InnerTextView: TextView {
 	var theme: SyntaxColorTheme?
 	
 	var cachedParagraphs: [Paragraph]?
-	
+
+	var lineNumbers: [String]?
+
 	func invalidateCachedParagraphs() {
 		cachedParagraphs = nil
 	}

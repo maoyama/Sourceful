@@ -74,7 +74,7 @@ import Foundation
 					
 				} else {
 					
-					paragraphs = generateParagraphs(for: textView, flipRects: true)
+					paragraphs = generateParagraphs(for: textView, lineNumbers: textView.lineNumbers, flipRects: true)
 					textView.cachedParagraphs = paragraphs
 					
 				}
