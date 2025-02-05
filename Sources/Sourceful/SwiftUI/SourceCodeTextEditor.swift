@@ -183,6 +183,18 @@ extension SourceCodeTextEditor {
     }
 }
 
+#Preview("Custom line numbers") {
+    @Previewable @State var text = "Hello world!\n\nHello world!\n"
+    @Previewable @State var lineNumbers = ["111", "112", "113", "114"]
+
+    LazyVStack {
+        Text(text)
+        SourceCodeTextEditor(text: $text, lineNumbers: $lineNumbers)
+        SourceCodeTextEditor(text: $text)
+        SourceCodeTextEditor(text: $text)
+    }
+}
+
 #Preview("line breaks are not working") {
     @Previewable @State var text = "Hello world! Hello world! Hello world! Hello world! Hello world!world!world!world!world!world!world!\nHello world!"
     LazyVStack {
