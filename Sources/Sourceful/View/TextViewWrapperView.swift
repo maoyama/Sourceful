@@ -86,7 +86,7 @@ import Foundation
 				let count = components.count
 			
 				let maxNumberOfDigits = "\(count)".count
-			
+                // TODO: lineNumbersがある時
 				textView.updateGutterWidth(for: maxNumberOfDigits)
 			
 				theme.gutterStyle.backgroundColor.setFill()

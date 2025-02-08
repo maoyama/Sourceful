@@ -59,10 +59,8 @@ func generateParagraphs(for textView: InnerTextView, lineNumbers: [String]?, fli
 		i += 1
 		
 		let rect = textView.paragraphRectForRange(range: paragraphRange)
-		
-		let paragraph = Paragraph(rect: rect, number: i)
+        let paragraph = Paragraph(rect: rect, number: i, lineNumbers: lineNumbers)
 		paragraphs.append(paragraph)
-		
 	}
 	
 	if textView.text.isEmpty || textView.text.hasSuffix("\n") {
@@ -90,9 +88,8 @@ func generateParagraphs(for textView: InnerTextView, lineNumbers: [String]?, fli
 		
 		
 		i += 1
-		let endParagraph = Paragraph(rect: rect, number: i)
+        let endParagraph = Paragraph(rect: rect, number: i, lineNumbers: lineNumbers)
 		paragraphs.append(endParagraph)
-		
 	}
 	
 	
