@@ -82,11 +82,13 @@ import Foundation
 				paragraphs = offsetParagraphs(paragraphs, for: textView, yOffset: yOffset)
 			
 				let components = textView.text.components(separatedBy: .newlines)
-			
-				let count = components.count
-			
-				let maxNumberOfDigits = "\(count)".count
-                // TODO: lineNumbersがある時
+
+                let maxNumberOfDigits: Int
+                if let lineNumbers = textView.lineNumbers, !lineNumbers.isEmpty {
+                    maxNumberOfDigits = lineNumbers.map { $0.count }.max() ?? 0
+                } else {
+                    maxNumberOfDigits = "\(components.count)".count
+                }
 				textView.updateGutterWidth(for: maxNumberOfDigits)
 			
 				theme.gutterStyle.backgroundColor.setFill()
