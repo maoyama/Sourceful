@@ -61,11 +61,6 @@ import Foundation
 				path.fill()
 				
 			} else {
-			
-				let contentHeight = textView.layoutManager?.usedRect(for: textView.textContainer!).height ?? 0
-
-				let yOffset = self.bounds.height - contentHeight
-			
 				var paragraphs: [Paragraph]
 			
 				if let cached = textView.cachedParagraphs {
@@ -78,10 +73,7 @@ import Foundation
 					textView.cachedParagraphs = paragraphs
 					
 				}
-			
-				paragraphs = offsetParagraphs(paragraphs, for: textView, yOffset: yOffset)
-			
-				let components = textView.text.components(separatedBy: .newlines)
+							let components = textView.text.components(separatedBy: .newlines)
 
                 let maxNumberOfDigits: Int
                 if let lineNumbers = textView.lineNumbers, !lineNumbers.isEmpty {

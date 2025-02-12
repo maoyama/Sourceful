@@ -187,7 +187,7 @@ extension SourceCodeTextEditor {
     @Previewable @State var text = "Hello world!\n\nHello world!\n"
     @Previewable @State var lineNumbers = ["111", "112", "113", "114"]
     @Previewable @State var lineNumbers2 = ["111", "112", "1134", ""]
-    @Previewable @State var lineNumbers3 = ["111", "", "1134", ""]
+    @Previewable @State var lineNumbers3 = ["111"]
 
     LazyVStack {
         Text(text)
@@ -198,10 +198,23 @@ extension SourceCodeTextEditor {
     }
 }
 
-#Preview("line breaks are not working") {
+#Preview("Line breaks") {
     @Previewable @State var text = "Hello world! Hello world! Hello world! Hello world! Hello world!world!world!world!world!world!world!\nHello world!"
-    LazyVStack {
-        Text(text)
+    VStack {
         SourceCodeTextEditor(text: $text)
+        SourceCodeTextEditor(text: $text)
+    }
+}
+
+#Preview("ScrollView") {
+    @Previewable @State var text = "1.Hello world! Hello world! Hello world! Hello world! Hello world!world!world!world!world!world!world!\n2.Hello world!"
+
+    SwiftUI.ScrollView {
+        LazyVStack {
+            Text(text)
+            Text(text)
+            SourceCodeTextEditor(text: $text)
+            SourceCodeTextEditor(text: $text)
+        }
     }
 }

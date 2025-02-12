@@ -107,40 +107,7 @@ func generateParagraphs(for textView: InnerTextView, lineNumbers: [String]?, fli
 	return paragraphs
 }
 
-func offsetParagraphs(_ paragraphs: [Paragraph], for textView: InnerTextView, yOffset: CGFloat = 0) -> [Paragraph] {
-	
-	var paragraphs = paragraphs
-	
-	#if os(macOS)
-		
-		if let yOffset = textView.enclosingScrollView?.contentView.bounds.origin.y {
-			
-			paragraphs = paragraphs.map { (p) -> Paragraph in
-				
-				var p = p
-				p.rect.origin.y += yOffset
-				
-				return p
-			}
-		}
-		
-		
-	#endif
-	
-	
-	
-	paragraphs = paragraphs.map { (p) -> Paragraph in
-		
-		var p = p
-		p.rect.origin.y += yOffset
-		return p
-	}
-	
-	return paragraphs
-}
-
 func drawLineNumbers(_ paragraphs: [Paragraph], in rect: CGRect, for textView: InnerTextView) {
-	
 	guard let style = textView.theme?.lineNumbersStyle else {
 		return
 	}
