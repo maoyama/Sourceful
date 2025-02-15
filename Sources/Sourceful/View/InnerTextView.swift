@@ -27,7 +27,11 @@ class InnerTextView: TextView {
 	
 	var cachedParagraphs: [Paragraph]?
 
-    var lineNumbers: [String]?
+    var lineNumbers: [String]? {
+        didSet {
+            updateGutterWidth()
+        }
+    }
 
     func maxNumberOfDigits() -> Int? {
         let maxNumberOfDigits: Int
@@ -52,14 +56,12 @@ class InnerTextView: TextView {
 	}
 	
 	func updateGutterWidth(for numberOfCharacters: Int) {
-		
 		let leftInset: CGFloat = 4.0
 		let rightInset: CGFloat = 4.0
 		
 		let charWidth: CGFloat = 10.0
 		
 		gutterWidth = max(theme?.gutterStyle.minimumWidth ?? 0.0, CGFloat(numberOfCharacters) * charWidth + leftInset + rightInset)
-        print("updated GutterWidth", gutterWidth)
 	}
 	
 	#if os(iOS)
@@ -138,11 +140,11 @@ class InnerTextView: TextView {
 
 	}
 	#endif
-	
-//	var gutterWidth: CGFloat = 0
-	var gutterWidth: CGFloat = 0.0	
-	#if os(iOS)
-	
+
+    var gutterWidth: CGFloat = 0.0
+
+    #if os(iOS)
+
 	override func caretRect(for position: UITextPosition) -> CGRect {
 		
 		var superRect = super.caretRect(for: position)

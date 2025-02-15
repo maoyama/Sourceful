@@ -63,7 +63,7 @@ extension SyntaxTextView {
 			
 		}
 		
-		colorTextView(lexerForSource: { (source) -> Lexer in
+		layoutTextView(lexerForSource: { (source) -> Lexer in
 			return delegate.lexerForSource(source)
 		})
 		
@@ -139,7 +139,7 @@ extension SyntaxTextView {
     
     func didUpdateText() {
         
-        refreshColors()
+        refreshDisplay()
         delegate?.didChangeText(self)
         
     }
@@ -164,12 +164,12 @@ extension SyntaxTextView {
 			didUpdateText()
 		}
         
-        func refreshColors() {
+        func refreshDisplay() {
             self.invalidateCachedTokens()
             self.textView.invalidateCachedParagraphs()
             
             if let delegate = delegate {
-                colorTextView(lexerForSource: { (source) -> Lexer in
+                layoutTextView(lexerForSource: { (source) -> Lexer in
                     return delegate.lexerForSource(source)
                 })
             }
