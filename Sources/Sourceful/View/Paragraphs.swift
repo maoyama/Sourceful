@@ -68,7 +68,7 @@ func generateParagraphs(for textView: InnerTextView, lineNumbers: [String]?, fli
 		var rect: CGRect
 		
 		#if os(macOS)
-			let gutterWidth = textView.textContainerInset.width
+            let gutterWidth = textView.gutterWidth
 		#else
 			let gutterWidth = textView.textContainerInset.left
 		#endif

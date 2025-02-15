@@ -126,20 +126,23 @@ public struct SourceCodeTextEditor: _ViewRepresentable {
 
     public func sizeThatFits(_ proposal: ProposedViewSize, nsView: SyntaxTextView, context: Context) -> CGSize? {
         guard let width = proposal.width else { return nil }
-        return .init(width: width, height: fittingSize(for: nsView.contentTextView).height)
+        let height = fittingHeight(for: nsView.contentTextView, width: width)
+        print("gutterWidth", nsView.textView.gutterWidth)
+        print("Computed Size:", CGSize(width: width, height: height))
+
+        return CGSize(width: width, height: height)
     }
 
-    func fittingSize(for textView: NSTextView) -> NSSize {
+    func fittingHeight(for textView: NSTextView, width: CGFloat) -> CGFloat {
         guard let textContainer = textView.textContainer,
               let layoutManager = textView.layoutManager else {
-            return .zero
+            return 0
         }
-        textContainer.containerSize = NSSize(width: textView.bounds.width, height: .greatestFiniteMagnitude)
-        layoutManager.glyphRange(for: textContainer)
-        let neededHeight = layoutManager.usedRect(for: textContainer).height
-        return NSSize(width: textView.bounds.width, height: neededHeight)
-    }
 
+        textContainer.containerSize = NSSize(width: width, height: .greatestFiniteMagnitude)
+        layoutManager.ensureLayout(for: textContainer)
+        return layoutManager.usedRect(for: textContainer).size.height
+    }
 }
 
 extension SourceCodeTextEditor {
@@ -217,4 +220,17 @@ extension SourceCodeTextEditor {
             SourceCodeTextEditor(text: $text)
         }
     }
+}
+
+#Preview("Size that fits") {
+    @Previewable @State var text = """
+A string is a series of characters, such as "Swift", that forms a collection. Strings in Swift are Unicode correct and locale insensitive, and are designed to be efficient. The String type bridges with the Objective-C class NSString and offers interoperability with C functions that works with strings.
+You can create new strings using string literals or string interpolations. A string literal is a series of characters enclosed in quotes.
+"""
+    @Previewable @State var lineNumbers = ["123456789"]
+
+    VStack {
+        SourceCodeTextEditor(text: $text, lineNumbers: $lineNumbers)
+    }
+    .frame(width: 300)
 }

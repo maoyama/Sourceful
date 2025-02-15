@@ -268,6 +268,7 @@ open class SyntaxTextView: _View {
             #if os(macOS)
             textView.layer?.isOpaque = true
             textView.string = newValue
+            textView.updateGutterWidth()
             refreshColors()
             #else
             // If the user sets this property as soon as they create the view, we get a strange UIKit bug where the text often misses a final line in some Dynamic Type configurations. The text isn't actually missing: if you background the app then foreground it the text reappears just fine, so there's some sort of drawing sync problem. A simple fix for this is to give UIKit a tiny bit of time to create all its data before we trigger the update, so we push the updating work to the runloop.
@@ -454,6 +455,8 @@ open class SyntaxTextView: _View {
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.paragraphSpacing = 2.0
         paragraphStyle.defaultTabInterval = themeInfo.spaceWidth * 4
+        paragraphStyle.firstLineHeadIndent = textView.gutterWidth
+        paragraphStyle.headIndent = textView.gutterWidth
         paragraphStyle.tabStops = []
 
         let wholeRange = NSRange(location: 0, length: (source as NSString).length)

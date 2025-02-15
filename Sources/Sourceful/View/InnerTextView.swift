@@ -27,7 +27,21 @@ class InnerTextView: TextView {
 	
 	var cachedParagraphs: [Paragraph]?
 
-	var lineNumbers: [String]?
+    var lineNumbers: [String]?
+
+    func maxNumberOfDigits() -> Int? {
+        let maxNumberOfDigits: Int
+        if let lineNumbers = lineNumbers, !lineNumbers.isEmpty {
+            maxNumberOfDigits = lineNumbers.map { $0.count }.max() ?? 0
+        } else {
+            maxNumberOfDigits = "\(text.components(separatedBy: .newlines).count)".count
+        }
+        return maxNumberOfDigits
+    }
+
+    func updateGutterWidth() {
+        updateGutterWidth(for: maxNumberOfDigits() ?? 0)
+    }
 
 	func invalidateCachedParagraphs() {
 		cachedParagraphs = nil
@@ -45,7 +59,7 @@ class InnerTextView: TextView {
 		let charWidth: CGFloat = 10.0
 		
 		gutterWidth = max(theme?.gutterStyle.minimumWidth ?? 0.0, CGFloat(numberOfCharacters) * charWidth + leftInset + rightInset)
-		
+        print("updated GutterWidth", gutterWidth)
 	}
 	
 	#if os(iOS)
@@ -125,35 +139,8 @@ class InnerTextView: TextView {
 	}
 	#endif
 	
-	var gutterWidth: CGFloat {
-		set {
-			
-			#if os(macOS)
-				textContainerInset = NSSize(width: newValue, height: 0)
-			#else
-				textContainerInset = UIEdgeInsets(top: 0, left: newValue, bottom: 0, right: 0)
-			#endif
-			
-		}
-		get {
-			
-			#if os(macOS)
-				return textContainerInset.width
-			#else
-				return textContainerInset.left
-			#endif
-			
-		}
-	}
-//	var gutterWidth: CGFloat = 0.0 {
-//		didSet {
-//
-//			textContainer.exclusionPaths = [UIBezierPath(rect: CGRect(x: 0.0, y: 0.0, width: gutterWidth, height: .greatestFiniteMagnitude))]
-//
-//		}
-//
-//	}
-	
+//	var gutterWidth: CGFloat = 0
+	var gutterWidth: CGFloat = 0.0	
 	#if os(iOS)
 	
 	override func caretRect(for position: UITextPosition) -> CGRect {

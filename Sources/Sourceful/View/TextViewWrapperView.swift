@@ -73,16 +73,7 @@ import Foundation
 					textView.cachedParagraphs = paragraphs
 					
 				}
-							let components = textView.text.components(separatedBy: .newlines)
 
-                let maxNumberOfDigits: Int
-                if let lineNumbers = textView.lineNumbers, !lineNumbers.isEmpty {
-                    maxNumberOfDigits = lineNumbers.map { $0.count }.max() ?? 0
-                } else {
-                    maxNumberOfDigits = "\(components.count)".count
-                }
-				textView.updateGutterWidth(for: maxNumberOfDigits)
-			
 				theme.gutterStyle.backgroundColor.setFill()
 			
 				let gutterRect = CGRect(x: 0, y: 0, width: textView.gutterWidth, height: rect.height)
@@ -92,7 +83,7 @@ import Foundation
 				drawLineNumbers(paragraphs, in: rect, for: textView)
 			
 			}
-			
+
 		}
 		
 	}
