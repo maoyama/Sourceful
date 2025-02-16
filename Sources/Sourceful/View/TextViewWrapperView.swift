@@ -74,9 +74,11 @@ import Foundation
 					
 				}
 
+
 				theme.gutterStyle.backgroundColor.setFill()
 			
-				let gutterRect = CGRect(x: 0, y: 0, width: textView.gutterWidth, height: rect.height)
+				let gutterRect = CGRect(x: 0, y: rect.minY, width: textView.gutterWidth, height: rect.height)
+
 				let path = BezierPath(rect: gutterRect)
 				path.fill()
 			
