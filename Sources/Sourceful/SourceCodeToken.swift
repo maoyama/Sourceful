@@ -43,3 +43,19 @@ struct SimpleSourceCodeToken: SourceCodeToken {
 	let range: Range<String.Index>
 	
 }
+
+public enum GitDiffOutputChunkTokenType: String, CaseIterable {
+    case header = "@"
+    case removed = "-"
+    case added = "+"
+    case unchanged = " "
+}
+
+struct GitDiffOutputChunkToken: Token {
+    var isEditorPlaceholder = false
+    var isPlain: Bool {
+        type == .unchanged
+    }
+    var range: Range<String.Index>
+    var type: GitDiffOutputChunkTokenType
+}
