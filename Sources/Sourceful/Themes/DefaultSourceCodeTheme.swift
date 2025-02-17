@@ -51,5 +51,16 @@ public struct DefaultSourceCodeTheme: SourceCodeTheme {
 		}
 		
 	}
-	
+
+    public func backGroundColor(for diffType: GitDiffOutputChunkTokenType) -> Color? {
+        switch diffType {
+        case .added:
+            return .green.withAlphaComponent(0.2)
+        case .removed:
+            return .red.withAlphaComponent(0.2)
+        default:
+            return nil
+        }
+    }
+
 }

@@ -11,7 +11,7 @@ import Foundation
 public protocol SourceCodeTheme: SyntaxColorTheme {
 
     func color(for syntaxColorType: SourceCodeTokenType) -> Color
-    func backGroundColor(for syntaxColorType: GitDiffOutputChunkTokenType) -> Color?
+    func backGroundColor(for diffType: GitDiffOutputChunkTokenType) -> Color?
 
 }
 

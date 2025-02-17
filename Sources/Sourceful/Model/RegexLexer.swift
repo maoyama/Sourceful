@@ -94,19 +94,6 @@ extension RegexLexer {
 		return tokens
 	}
 
-    func generateGitDiffOutputTokens(source: String) -> [Token] {
-        var tokens = [GitDiffOutputChunkToken]()
-
-        source.enumerateSubstrings(in: source.startIndex..<source.endIndex, options: [.byLines]) { (line, range, _, _) in
-            GitDiffOutputChunkTokenType.allCases.forEach { type in
-                if line?.hasPrefix(type.rawValue) == true {
-                    tokens.append(.init(range: range, type: type))
-                }
-            }
-        }
-        return tokens
-    }
-
 	public func generateRegexTokens(_ generator: RegexTokenGenerator, source: String) -> [Token] {
 
 		var tokens = [Token]()

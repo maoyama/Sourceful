@@ -11,6 +11,6 @@ final public class PlainLexer: Lexer {
     public init() {}
 
     public func getSavannaTokens(input: String) -> [any Token] {
-        []
+        generateGitDiffOutputTokens(source: input)
     }
 }
