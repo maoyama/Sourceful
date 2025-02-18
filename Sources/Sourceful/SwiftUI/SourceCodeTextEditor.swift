@@ -234,6 +234,7 @@ You can create new strings using string literals or string interpolations. A str
 
 #Preview("Plain Lexer") {
     @Previewable @State var text = """
+@@ -231,3 +231,23 @@ Hello world
 + A string is a series of characters, such as "Swift", that forms a collection. Strings in Swift are Unicode correct and locale insensitive, and are designed to be efficient. The String type bridges with the Objective-C class NSString and offers interoperability with C functions that works with strings.
 - You can create new strings using string literals or string interpolations. A string literal is a series of characters enclosed in quotes.
 """
@@ -245,6 +246,27 @@ You can create new strings using string literals or string interpolations. A str
             lexerForSource: { _ in PlainLexer() },
             textViewDidBeginEditing: { _ in },
             theme: { DefaultSourceCodeTheme() }
+        ))
+
+    }
+    .frame(width: 300)
+
+}
+
+#Preview("Git Diff Output") {
+    @Previewable @State var text = """
+@@ -231,3 +231,23 @@ Hello world
++ A string is a series of characters, such as "Swift", that forms a collection. Strings in Swift are Unicode correct and locale insensitive, and are designed to be efficient. The String type bridges with the Objective-C class NSString and offers interoperability with C functions that works with strings.
+- You can create new strings using string literals or string interpolations. A string literal is a series of characters enclosed in quotes.
+"""
+    VStack {
+
+        SourceCodeTextEditor(text: $text, customization: .init(
+            didChangeText: {_ in },
+            insertionPointColor: { Sourceful.Color.white },
+            lexerForSource: { _ in PlainLexer() },
+            textViewDidBeginEditing: { _ in },
+            theme: { GitDiffOutputTheme() }
         ))
 
     }
