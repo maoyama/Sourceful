@@ -66,7 +66,9 @@ extension RegexLexer {
 			}
 		
 		}
-	
+
+        tokens.append(contentsOf: generateGitDiffOutputTokens(source: input))
+
 		return tokens
 	}
 
@@ -91,7 +93,7 @@ extension RegexLexer {
 
 		return tokens
 	}
-	
+
 	public func generateRegexTokens(_ generator: RegexTokenGenerator, source: String) -> [Token] {
 
 		var tokens = [Token]()

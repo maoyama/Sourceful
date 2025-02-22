@@ -61,11 +61,22 @@ open class SyntaxTextView: _View {
 
     public weak var delegate: SyntaxTextViewDelegate? {
         didSet {
-            refreshColors()
+            refreshDisplay()
         }
     }
 
+
     var ignoreSelectionChange = false
+
+	public var lineNumbers: [String]? {
+		set {
+			textView.lineNumbers = newValue
+            refreshDisplay()
+		}
+		get {
+			return textView.lineNumbers
+		}
+	}
 
     #if os(macOS)
 
@@ -139,57 +150,30 @@ open class SyntaxTextView: _View {
 
     #if os(macOS)
 
-    public let scrollView = NSScrollView()
 
     #endif
 
     private func setup() {
 
         textView.gutterWidth = 20
-
-        #if os(iOS)
-
         textView.translatesAutoresizingMaskIntoConstraints = false
-
-        #endif
 
         #if os(macOS)
 
         wrapperView.translatesAutoresizingMaskIntoConstraints = false
 
-        scrollView.backgroundColor = .clear
-        scrollView.drawsBackground = false
-
-        scrollView.contentView.backgroundColor = .clear
-
-        scrollView.translatesAutoresizingMaskIntoConstraints = false
-
-        addSubview(scrollView)
+        addSubview(textView)
+        textView.topAnchor.constraint(equalTo: self.topAnchor).isActive = true
+        textView.bottomAnchor.constraint(equalTo: self.bottomAnchor).isActive = true
+        textView.leadingAnchor.constraint(equalTo: self.leadingAnchor).isActive = true
+        textView.trailingAnchor.constraint(equalTo: self.trailingAnchor).isActive = true
 
         addSubview(wrapperView)
 
-
-        scrollView.topAnchor.constraint(equalTo: self.topAnchor).isActive = true
-        scrollView.bottomAnchor.constraint(equalTo: self.bottomAnchor).isActive = true
-        scrollView.leadingAnchor.constraint(equalTo: self.leadingAnchor).isActive = true
-        scrollView.trailingAnchor.constraint(equalTo: self.trailingAnchor).isActive = true
-
-        wrapperView.topAnchor.constraint(equalTo: scrollView.topAnchor).isActive = true
-        wrapperView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor).isActive = true
-        wrapperView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor).isActive = true
-        wrapperView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor).isActive = true
-
-
-        scrollView.borderType = .noBorder
-        scrollView.hasVerticalScroller = true
-        scrollView.hasHorizontalScroller = false
-        scrollView.scrollerKnobStyle = .light
-
-        scrollView.documentView = textView
-
-        scrollView.contentView.postsBoundsChangedNotifications = true
-
-        NotificationCenter.default.addObserver(self, selector: #selector(didScroll(_:)), name: NSView.boundsDidChangeNotification, object: scrollView.contentView)
+        wrapperView.topAnchor.constraint(equalTo: self.topAnchor).isActive = true
+        wrapperView.bottomAnchor.constraint(equalTo: self.bottomAnchor).isActive = true
+        wrapperView.leadingAnchor.constraint(equalTo: self.leadingAnchor).isActive = true
+        wrapperView.trailingAnchor.constraint(equalTo: self.trailingAnchor).isActive = true
 
         textView.minSize = NSSize(width: 0.0, height: self.bounds.height)
         textView.maxSize = NSSize(width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude)
@@ -245,22 +229,15 @@ open class SyntaxTextView: _View {
             textView.smartInsertDeleteType = .no
         }
 
-        self.clipsToBounds = true
 
         #endif
-
+        self.clipsToBounds = true
     }
 
     #if os(macOS)
 
     open override func viewDidMoveToSuperview() {
         super.viewDidMoveToSuperview()
-
-    }
-
-    @objc func didScroll(_ notification: Notification) {
-
-        wrapperView.setNeedsDisplay(wrapperView.bounds)
 
     }
 
@@ -292,7 +269,8 @@ open class SyntaxTextView: _View {
             #if os(macOS)
             textView.layer?.isOpaque = true
             textView.string = newValue
-            refreshColors()
+            textView.updateGutterWidth()
+            refreshDisplay()
             #else
             // If the user sets this property as soon as they create the view, we get a strange UIKit bug where the text often misses a final line in some Dynamic Type configurations. The text isn't actually missing: if you background the app then foreground it the text reappears just fine, so there's some sort of drawing sync problem. A simple fix for this is to give UIKit a tiny bit of time to create all its data before we trigger the update, so we push the updating work to the runloop.
             DispatchQueue.main.async {
@@ -346,7 +324,7 @@ open class SyntaxTextView: _View {
             textView.theme = theme
             textView.font = theme.font
 
-            refreshColors()
+            refreshDisplay()
         }
     }
 
@@ -377,7 +355,7 @@ open class SyntaxTextView: _View {
         cachedTokens = nil
     }
 
-    func colorTextView(lexerForSource: (String) -> Lexer) {
+    func layoutTextView(lexerForSource: (String) -> Lexer) {
         guard let source = textView.text else {
             return
         }
@@ -478,6 +456,8 @@ open class SyntaxTextView: _View {
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.paragraphSpacing = 2.0
         paragraphStyle.defaultTabInterval = themeInfo.spaceWidth * 4
+        paragraphStyle.firstLineHeadIndent = textView.gutterWidth
+        paragraphStyle.headIndent = textView.gutterWidth
         paragraphStyle.tabStops = []
 
         let wholeRange = NSRange(location: 0, length: (source as NSString).length)

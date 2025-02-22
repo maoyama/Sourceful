@@ -61,11 +61,6 @@ import Foundation
 				path.fill()
 				
 			} else {
-			
-				let contentHeight = textView.enclosingScrollView!.documentView!.bounds.height
-			
-				let yOffset = self.bounds.height - contentHeight
-			
 				var paragraphs: [Paragraph]
 			
 				if let cached = textView.cachedParagraphs {
@@ -74,31 +69,23 @@ import Foundation
 					
 				} else {
 					
-					paragraphs = generateParagraphs(for: textView, flipRects: true)
+					paragraphs = generateParagraphs(for: textView, lineNumbers: textView.lineNumbers, flipRects: true)
 					textView.cachedParagraphs = paragraphs
 					
 				}
-			
-				paragraphs = offsetParagraphs(paragraphs, for: textView, yOffset: yOffset)
-			
-				let components = textView.text.components(separatedBy: .newlines)
-			
-				let count = components.count
-			
-				let maxNumberOfDigits = "\(count)".count
-			
-				textView.updateGutterWidth(for: maxNumberOfDigits)
-			
+
+
 				theme.gutterStyle.backgroundColor.setFill()
 			
-				let gutterRect = CGRect(x: 0, y: 0, width: textView.gutterWidth, height: rect.height)
+				let gutterRect = CGRect(x: 0, y: rect.minY, width: textView.gutterWidth, height: rect.height)
+
 				let path = BezierPath(rect: gutterRect)
 				path.fill()
 			
 				drawLineNumbers(paragraphs, in: rect, for: textView)
 			
 			}
-			
+
 		}
 		
 	}

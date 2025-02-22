@@ -18,15 +18,26 @@ import CoreGraphics
 struct Paragraph {
 	
 	var rect: CGRect
-	let number: Int
-	
-	var string: String {
-		return "\(number)"
-	}
-	
+    let number: Int
+    private var lineString: String
+
+    init(rect: CGRect, number: Int, lineNumbers: [String]?) {
+        self.rect = rect
+        self.number = number
+        if let lineNumbers, !lineNumbers.isEmpty {
+            if lineNumbers.count > (number - 1) {
+                lineString = lineNumbers[number - 1]
+            } else {
+                lineString = ""
+            }
+        } else {
+            lineString = "\(number)"
+        }
+    }
+
 	func attributedString(for style: LineNumbersStyle) -> NSAttributedString {
 		
-		let attr = NSMutableAttributedString(string: string)
+        let attr = NSMutableAttributedString(string: lineString)
 		let range = NSMakeRange(0, attr.length)
 		
 		let attributes: [NSAttributedString.Key: Any] = [

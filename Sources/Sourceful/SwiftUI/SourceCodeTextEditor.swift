@@ -56,6 +56,7 @@ public struct SourceCodeTextEditor: _ViewRepresentable {
     }
     
     @Binding private var text: String
+    @Binding private var lineNumbers: [String]
     private var shouldBecomeFirstResponder: Bool
     private var custom: Customization
     
@@ -68,11 +69,13 @@ public struct SourceCodeTextEditor: _ViewRepresentable {
             textViewDidBeginEditing: { _ in },
             theme: { DefaultSourceCodeTheme() }
         ),
-        shouldBecomeFirstResponder: Bool = false
+        shouldBecomeFirstResponder: Bool = false,
+        lineNumbers: Binding<[String]> = .constant([])
     ) {
         self._text = text
         self.custom = customization
         self.shouldBecomeFirstResponder = shouldBecomeFirstResponder
+        self._lineNumbers = lineNumbers
     }
     
     public func makeCoordinator() -> Coordinator {
@@ -84,6 +87,7 @@ public struct SourceCodeTextEditor: _ViewRepresentable {
         let wrappedView = SyntaxTextView()
         wrappedView.delegate = context.coordinator
         wrappedView.theme = custom.theme()
+        wrappedView.lineNumbers = lineNumbers
 //        wrappedView.contentTextView.insertionPointColor = custom.insertionPointColor()
         
         context.coordinator.wrappedView = wrappedView
@@ -103,8 +107,10 @@ public struct SourceCodeTextEditor: _ViewRepresentable {
     #if os(macOS)
     public func makeNSView(context: Context) -> SyntaxTextView {
         let wrappedView = SyntaxTextView()
+        wrappedView.textView.isEditable = false
         wrappedView.delegate = context.coordinator
         wrappedView.theme = custom.theme()
+        wrappedView.lineNumbers = lineNumbers
         wrappedView.contentTextView.insertionPointColor = custom.insertionPointColor()
         
         context.coordinator.wrappedView = wrappedView
@@ -117,8 +123,23 @@ public struct SourceCodeTextEditor: _ViewRepresentable {
         view.text = text
     }
     #endif
-    
 
+    public func sizeThatFits(_ proposal: ProposedViewSize, nsView: SyntaxTextView, context: Context) -> CGSize? {
+        guard let width = proposal.width else { return nil }
+        let height = fittingHeight(for: nsView.contentTextView, width: width)
+        return CGSize(width: width, height: height)
+    }
+
+    func fittingHeight(for textView: NSTextView, width: CGFloat) -> CGFloat {
+        guard let textContainer = textView.textContainer,
+              let layoutManager = textView.layoutManager else {
+            return 0
+        }
+
+        textContainer.containerSize = NSSize(width: width, height: .greatestFiniteMagnitude)
+        layoutManager.ensureLayout(for: textContainer)
+        return layoutManager.usedRect(for: textContainer).size.height
+    }
 }
 
 extension SourceCodeTextEditor {
@@ -151,3 +172,104 @@ extension SourceCodeTextEditor {
 }
 
 #endif
+
+#Preview {
+    @Previewable @State var text = "Hello world!\n\nHello world!\n"
+    LazyVStack {
+        Text(text)
+        SourceCodeTextEditor(text: $text)
+        SourceCodeTextEditor(text: $text)
+        SourceCodeTextEditor(text: $text)
+    }
+}
+
+#Preview("Custom line numbers") {
+    @Previewable @State var text = "Hello world!\n\nHello world!\n"
+    @Previewable @State var lineNumbers = ["111", "112", "113", "114"]
+    @Previewable @State var lineNumbers2 = ["111", "112", "1134", ""]
+    @Previewable @State var lineNumbers3 = ["111"]
+
+    LazyVStack {
+        Text(text)
+        SourceCodeTextEditor(text: $text, lineNumbers: $lineNumbers)
+        SourceCodeTextEditor(text: $text, lineNumbers: $lineNumbers2)
+        SourceCodeTextEditor(text: $text, lineNumbers: $lineNumbers3)
+
+    }
+}
+
+#Preview("Line breaks") {
+    @Previewable @State var text = "Hello world! Hello world! Hello world! Hello world! Hello world!world!world!world!world!world!world!\nHello world!"
+    VStack {
+        SourceCodeTextEditor(text: $text)
+        SourceCodeTextEditor(text: $text)
+    }
+}
+
+#Preview("ScrollView") {
+    @Previewable @State var text = "1.Hello world! Hello world! Hello world! Hello world! Hello world!world!world!world!world!world!world!\n2.Hello world!"
+
+    SwiftUI.ScrollView {
+        LazyVStack {
+            Text(text)
+            Text(text)
+            SourceCodeTextEditor(text: $text)
+            SourceCodeTextEditor(text: $text)
+        }
+    }
+}
+
+#Preview("Size that fits") {
+    @Previewable @State var text = """
+A string is a series of characters, such as "Swift", that forms a collection. Strings in Swift are Unicode correct and locale insensitive, and are designed to be efficient. The String type bridges with the Objective-C class NSString and offers interoperability with C functions that works with strings.
+You can create new strings using string literals or string interpolations. A string literal is a series of characters enclosed in quotes.
+"""
+    @Previewable @State var lineNumbers = ["123456789"]
+
+    VStack {
+        SourceCodeTextEditor(text: $text, lineNumbers: $lineNumbers)
+    }
+    .frame(width: 300)
+}
+
+#Preview("Plain Lexer") {
+    @Previewable @State var text = """
+@@ -231,3 +231,23 @@ Hello world
++ A string is a series of characters, such as "Swift", that forms a collection. Strings in Swift are Unicode correct and locale insensitive, and are designed to be efficient. The String type bridges with the Objective-C class NSString and offers interoperability with C functions that works with strings.
+- You can create new strings using string literals or string interpolations. A string literal is a series of characters enclosed in quotes.
+"""
+    VStack {
+
+        SourceCodeTextEditor(text: $text, customization: .init(
+            didChangeText: {_ in },
+            insertionPointColor: { Sourceful.Color.white },
+            lexerForSource: { _ in PlainLexer() },
+            textViewDidBeginEditing: { _ in },
+            theme: { DefaultSourceCodeTheme() }
+        ))
+
+    }
+    .frame(width: 300)
+
+}
+
+#Preview("Git Diff Output") {
+    @Previewable @State var text = """
+@@ -231,3 +231,23 @@ Hello world
++ A string is a series of characters, such as "Swift", that forms a collection. Strings in Swift are Unicode correct and locale insensitive, and are designed to be efficient. The String type bridges with the Objective-C class NSString and offers interoperability with C functions that works with strings.
+- You can create new strings using string literals or string interpolations. A string literal is a series of characters enclosed in quotes.
+"""
+    VStack {
+
+        SourceCodeTextEditor(text: $text, customization: .init(
+            didChangeText: {_ in },
+            insertionPointColor: { Sourceful.Color.white },
+            lexerForSource: { _ in PlainLexer() },
+            textViewDidBeginEditing: { _ in },
+            theme: { GitDiffOutputTheme() }
+        ))
+
+    }
+    .frame(width: 300)
+
+}

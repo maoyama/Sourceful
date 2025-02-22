@@ -47,7 +47,7 @@ extension TextView {
 	
 }
 
-func generateParagraphs(for textView: InnerTextView, flipRects: Bool = false) -> [Paragraph] {
+func generateParagraphs(for textView: InnerTextView, lineNumbers: [String]?, flipRects: Bool = false) -> [Paragraph] {
 	
 	let range = NSRange(location: 0, length: (textView.text as NSString).length)
 	
@@ -59,10 +59,8 @@ func generateParagraphs(for textView: InnerTextView, flipRects: Bool = false) ->
 		i += 1
 		
 		let rect = textView.paragraphRectForRange(range: paragraphRange)
-		
-		let paragraph = Paragraph(rect: rect, number: i)
+        let paragraph = Paragraph(rect: rect, number: i, lineNumbers: lineNumbers)
 		paragraphs.append(paragraph)
-		
 	}
 	
 	if textView.text.isEmpty || textView.text.hasSuffix("\n") {
@@ -70,7 +68,7 @@ func generateParagraphs(for textView: InnerTextView, flipRects: Bool = false) ->
 		var rect: CGRect
 		
 		#if os(macOS)
-			let gutterWidth = textView.textContainerInset.width
+            let gutterWidth = textView.gutterWidth
 		#else
 			let gutterWidth = textView.textContainerInset.left
 		#endif
@@ -90,9 +88,8 @@ func generateParagraphs(for textView: InnerTextView, flipRects: Bool = false) ->
 		
 		
 		i += 1
-		let endParagraph = Paragraph(rect: rect, number: i)
+        let endParagraph = Paragraph(rect: rect, number: i, lineNumbers: lineNumbers)
 		paragraphs.append(endParagraph)
-		
 	}
 	
 	
@@ -107,44 +104,10 @@ func generateParagraphs(for textView: InnerTextView, flipRects: Bool = false) ->
 		}
 		
 	}
-	
-	return paragraphs
-}
-
-func offsetParagraphs(_ paragraphs: [Paragraph], for textView: InnerTextView, yOffset: CGFloat = 0) -> [Paragraph] {
-	
-	var paragraphs = paragraphs
-	
-	#if os(macOS)
-		
-		if let yOffset = textView.enclosingScrollView?.contentView.bounds.origin.y {
-			
-			paragraphs = paragraphs.map { (p) -> Paragraph in
-				
-				var p = p
-				p.rect.origin.y += yOffset
-				
-				return p
-			}
-		}
-		
-		
-	#endif
-	
-	
-	
-	paragraphs = paragraphs.map { (p) -> Paragraph in
-		
-		var p = p
-		p.rect.origin.y += yOffset
-		return p
-	}
-	
 	return paragraphs
 }
 
 func drawLineNumbers(_ paragraphs: [Paragraph], in rect: CGRect, for textView: InnerTextView) {
-	
 	guard let style = textView.theme?.lineNumbersStyle else {
 		return
 	}
@@ -166,7 +129,7 @@ func drawLineNumbers(_ paragraphs: [Paragraph], in rect: CGRect, for textView: I
 		drawRect.origin.x = gutterWidth - drawSize.width - 4
 		
 		#if os(macOS)
-//			drawRect.origin.y += (drawRect.height - drawSize.height) / 2.0
+			drawRect.origin.y += (drawRect.height - drawSize.height) // superscript
 		#else
 			//			drawRect.origin.y += 22 - drawSize.height
 		#endif

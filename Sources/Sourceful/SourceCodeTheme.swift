@@ -9,9 +9,11 @@
 import Foundation
 
 public protocol SourceCodeTheme: SyntaxColorTheme {
-	
-	func color(for syntaxColorType: SourceCodeTokenType) -> Color
-	
+
+    func color(for syntaxColorType: SourceCodeTokenType) -> Color
+    func color(for diffType: GitDiffOutputChunkTokenType) -> Color?
+    func backGroundColor(for diffType: GitDiffOutputChunkTokenType) -> Color?
+
 }
 
 extension SourceCodeTheme {
@@ -32,8 +34,19 @@ extension SourceCodeTheme {
 		if let token = token as? SimpleSourceCodeToken {
 			attributes[.foregroundColor] = color(for: token.type)
 		}
-		
+        if let token = token as? GitDiffOutputChunkToken {
+            if let color = color(for: token.type) {
+                attributes[.foregroundColor] = color
+            }
+            if let backgroundColor = backGroundColor(for: token.type) {
+                attributes[.backgroundColor] = backgroundColor
+            }
+        }
+
 		return attributes
 	}
-	
+
+    public func color(for diffType: GitDiffOutputChunkTokenType) -> Color? { return nil }
+    public func backGroundColor(for diffType: GitDiffOutputChunkTokenType) -> Color? { return nil }
+
 }

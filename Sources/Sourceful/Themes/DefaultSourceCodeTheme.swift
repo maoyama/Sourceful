@@ -8,8 +8,7 @@
 
 import Foundation
 
-public struct DefaultSourceCodeTheme: SourceCodeTheme {
-	
+public struct DefaultSourceCodeTheme: SourceCodeTheme {	
 	public init() {
 		
 	}
@@ -52,5 +51,4 @@ public struct DefaultSourceCodeTheme: SourceCodeTheme {
 		}
 		
 	}
-	
 }
