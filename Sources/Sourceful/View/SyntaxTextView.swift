@@ -138,6 +138,7 @@ open class SyntaxTextView: _View {
         let textContainer = NSTextContainer(size: containerSize)
         
         textContainer.widthTracksTextView = true
+        textContainer.lineFragmentPadding = 0
 
         #if os(iOS)
         textContainer.heightTracksTextView = true
